@@ -476,6 +476,19 @@ This also works with Composition.
       copy_validations_from song: Song, band: Band
     end
 
+Note that once you tell Reform that validations from the model should be copied to the form object, there's a chance that the #save method could fail, since this is the point at which model validations are run (*not* at the #validate step, as you might expect). So, in order to properly handle model validations, your controller needs to change to something like the following:
+
+    class SongsController
+      def create
+        @form = SongForm.new(Song.new)
+
+        if @form.validate(params[:song]) && @form.save
+          # handle success
+        else
+          # handle error
+        end
+      end
+    end
 
 ## Agnosticism: Mapping Data
 
